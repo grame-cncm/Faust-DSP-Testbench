@@ -11,6 +11,7 @@
 #include "MainComponent.h"
 #include "../Main.h"
 #include "../Processing/ProcessorExamples.h"
+#include "../Processing/FaustProcessor.h"
 
 MainContentComponent::MainContentComponent (AudioDeviceManager& deviceManager)
     : AudioAppComponent (deviceManager)
@@ -23,7 +24,7 @@ MainContentComponent::MainContentComponent (AudioDeviceManager& deviceManager)
 // =================================================================================================================================
 // +++      Here is where to instantiate the processors being tested (it's OK to leave one as nullptr if you don't need it)      +++
 // =================================================================================================================================
-    procComponentA = std::make_unique<ProcessorComponent> ("A", new LpfExample());
+    procComponentA = std::make_unique<ProcessorComponent> ("A", new FaustExample());
     procComponentB = std::make_unique<ProcessorComponent> ("B", new ThruExample());
 // =================================================================================================================================
 
@@ -65,15 +66,15 @@ void MainContentComponent::prepareToPlay (int samplesPerBlockExpected, double sa
 	const auto numInputChannels = static_cast<uint32> (currentDevice->getActiveInputChannels().countNumberOfSetBits());
     const auto numOutputChannels = static_cast<uint32> (currentDevice->getActiveOutputChannels().countNumberOfSetBits());
 
-    const dsp::ProcessSpec spec {
+    const juce::dsp::ProcessSpec spec {
         sampleRate,
         static_cast<uint32> (samplesPerBlockExpected),
         jmax (numInputChannels, numOutputChannels)
     };
 
-    srcBufferA = dsp::AudioBlock<float> (srcBufferMemoryA, spec.numChannels, samplesPerBlockExpected);
-    srcBufferB = dsp::AudioBlock<float> (srcBufferMemoryB, spec.numChannels, samplesPerBlockExpected);
-    tempBuffer = dsp::AudioBlock<float> (tempBufferMemory, spec.numChannels, samplesPerBlockExpected);
+    srcBufferA = juce::dsp::AudioBlock<float> (srcBufferMemoryA, spec.numChannels, samplesPerBlockExpected);
+    srcBufferB = juce::dsp::AudioBlock<float> (srcBufferMemoryB, spec.numChannels, samplesPerBlockExpected);
+    tempBuffer = juce::dsp::AudioBlock<float> (tempBufferMemory, spec.numChannels, samplesPerBlockExpected);
     
     srcComponentA->prepare (spec);
     srcComponentB->prepare (spec);
@@ -89,7 +90,7 @@ void MainContentComponent::getNextAudioBlock (const AudioSourceChannelInfo& buff
     jassert (bufferToFill.numSamples <= srcBufferB.getNumSamples());
     jassert (bufferToFill.numSamples <= tempBuffer.getNumSamples());
 
-    dsp::AudioBlock<float> outputBlock (*bufferToFill.buffer, static_cast<size_t>(bufferToFill.startSample));
+    juce::dsp::AudioBlock<float> outputBlock (*bufferToFill.buffer, static_cast<size_t>(bufferToFill.startSample));
     
     // Copy current block into source buffers if needed
     if (srcComponentA->getMode() == SourceComponent::Mode::AudioIn)
@@ -98,8 +99,8 @@ void MainContentComponent::getNextAudioBlock (const AudioSourceChannelInfo& buff
         srcBufferB.copyFrom (outputBlock);
 
     // Generate audio from sources
-    srcComponentA->process(dsp::ProcessContextReplacing<float> (srcBufferA));
-    srcComponentB->process(dsp::ProcessContextReplacing<float> (srcBufferB));
+    srcComponentA->process(juce::dsp::ProcessContextReplacing<float> (srcBufferA));
+    srcComponentB->process(juce::dsp::ProcessContextReplacing<float> (srcBufferB));
 
     // Run audio through processors
     if (procComponentA->isProcessorEnabled())
@@ -122,13 +123,13 @@ void MainContentComponent::getNextAudioBlock (const AudioSourceChannelInfo& buff
 
     // Run audio through analyser (note that the analyser isn't expected to alter the outputBlock)
     if (analyserComponent->isProcessing())
-        analyserComponent->process (dsp::ProcessContextReplacing<float> (outputBlock));
+        analyserComponent->process (juce::dsp::ProcessContextReplacing<float> (outputBlock));
 
     // Run audio through monitoring section
     if (monitoringComponent->isMuted())
         outputBlock.clear();
     else
-        monitoringComponent->process (dsp::ProcessContextReplacing<float> (outputBlock));
+        monitoringComponent->process (juce::dsp::ProcessContextReplacing<float> (outputBlock));
 
     if (holdAudio.get())
     {
@@ -270,7 +271,7 @@ SourceComponent* MainContentComponent::getSourceComponentA()
 {
     return srcComponentA.get();
 }
-void MainContentComponent::routeSourcesAndProcess (ProcessorComponent* processor, dsp::AudioBlock<float>& temporaryBuffer)
+void MainContentComponent::routeSourcesAndProcess (ProcessorComponent* processor, juce::dsp::AudioBlock<float>& temporaryBuffer)
 {
     // Route signal sources
     if (processor->isSourceConnectedA())
@@ -285,7 +286,7 @@ void MainContentComponent::routeSourcesAndProcess (ProcessorComponent* processor
         temporaryBuffer.clear(); 
     
     // Perform processing
-    processor->process (dsp::ProcessContextReplacing<float> (temporaryBuffer));
+    processor->process (juce::dsp::ProcessContextReplacing<float> (temporaryBuffer));
     
     // Invert processor output as appropriate
     if (processor->isInverted())
