@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<JUCERPROJECT name="DSP Testbench" projectType="guiapp" reportAppUsage="0"
-              id="r6nItq" jucerFormatVersion="1" version="1.1.0">
-  <MAINGROUP id="u8eJT5" name="DSP Testbench">
+<JUCERPROJECT name="Faust DSP Testbench" projectType="guiapp" reportAppUsage="0"
+              id="r6nItq" jucerFormatVersion="1" version="1.2.0" displaySplashScreen="1"
+              bundleIdentifier="com.grame.fr" headerPath="/usr/local/include"
+              companyWebsite="https://faust.grame.fr">
+  <MAINGROUP id="u8eJT5" name="Faust DSP Testbench">
     <GROUP id="{EC3F1D61-E8BE-E4B3-C8EE-882109CF98DE}" name="Resources">
       <FILE id="rHdhvD" name="about.svg" compile="0" resource="1" file="Resources/about.svg"/>
       <FILE id="gFEf8y" name="audio_settings.svg" compile="0" resource="1"
@@ -67,6 +69,10 @@
               file="Source/GUI/SourceComponent.h"/>
       </GROUP>
       <GROUP id="{1929A062-3E27-DDE2-B0FB-A0FF3E05992D}" name="Processing">
+        <FILE id="YqXTO2" name="FaustProcessor.cpp" compile="1" resource="0"
+              file="Source/Processing/FaustProcessor.cpp"/>
+        <FILE id="BL74VK" name="FaustProcessor.h" compile="0" resource="0"
+              file="Source/Processing/FaustProcessor.h"/>
         <FILE id="aNz0q1" name="AudioDataTransfer.h" compile="0" resource="0"
               file="Source/Processing/AudioDataTransfer.h"/>
         <FILE id="Q3hti9" name="AudioScopeProcessor.h" compile="0" resource="0"
