@@ -2,14 +2,15 @@
 
 As a fork of the [DSP-Testbench](https://github.com/AndrewJJ/DSP-Testbench) project, Faust DSP Testbench is designed to help developers using the [JUCE framework](https://juce.com) to analyse their Faust DSP by providing a test harness for code inheriting from `juce::dsp::ProcessorBase`. The harness provides signal sources, routing, analysis and monitoring functions.
 
+
 ![Screenshot](./screenshot.png)
 
 ### Testing a Faust DSP program
 
-A [Faust](https://faust.grame.fr) `foo.dsp` DSP program can be compiled using:
+A pair of specific [FaustProcessor.h](Source/Processing/FaustProcessor.h) and [FaustProcessor.cpp](Source/Processing/FaustProcessor.cpp) architecture files have been developed to adapt a Faust generated C++ class in the DSP Testbench machinery. For now, all controllers are mapped in the [0..1] range. A [Faust](https://faust.grame.fr) `foo.dsp` DSP program can be compiled using:
 
 - `faust -uim foo.dsp -scn ::dsp -o mydsp.h`and the produced `mydsp.h` file simply replacing the one in Faust-DSP-Testbench/Source/Processing
-- then recompile
+- then recompile and run the DSP Testbench program
 
 ## Features
 
