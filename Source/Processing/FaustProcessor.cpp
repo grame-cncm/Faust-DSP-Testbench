@@ -22,6 +22,15 @@ void FaustExample::prepare (const juce::dsp::ProcessSpec& spec)
 }
 void FaustExample::process (const juce::dsp::ProcessContextReplacing<float>& context)
 {
+    // Guard: if the block has fewer channels than the DSP requires, skip processing
+    // rather than calling getChannelPointer() out of bounds on the audio thread.
+    if ((int)context.getOutputBlock().getNumChannels() < fDSP->getNumInputs() ||
+        (int)context.getOutputBlock().getNumChannels() < fDSP->getNumOutputs())
+    {
+        context.getOutputBlock().clear();
+        return;
+    }
+
     // Update controllers
     for (int ctrl = 0; ctrl < fUI.getParamsCount(); ctrl++) {
         fUI.setParamRatio(ctrl, getControlValue(ctrl));
