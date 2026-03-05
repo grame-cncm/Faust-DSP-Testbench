@@ -24,8 +24,8 @@ void ProcessorHarness::prepareHarness (const dsp::ProcessSpec& spec)
     if ( numChannelsAreDifferent || sampleRatesAreDifferent || blockSizesAreDifferent)
     {
         // Reset process duration statistics as these will not be valid if the spec has changed
-        procDurationMin = 0.0;
-        procDurationMax = 0.0;
+        procDurationMin = 1.0E100;
+        procDurationMax = -1.0;
         procDurationSum = 0.0;
         procDurationCount = 0.0;
     }
